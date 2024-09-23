@@ -41,16 +41,18 @@
         }
         article{
             background-color: #193F9E;
-        height: 300px;
-        width: 650px;;
-        margin: auto;
-        border-top-left-radius: 80px ;
-        border-top-right-radius: 8px ;
-        border-bottom-left-radius: 8px ;
-        border-bottom-right-radius: 80px;
-        color: white;
-        font-size: 80px;
-        
+            height: 115px;
+            width: 650px;;
+            margin: auto;
+            margin-bottom: 10px;
+            margin-top: 31px;
+            padding-top: 3%;
+            border-top-left-radius: 80px ;
+            border-top-right-radius: 8px ;
+            border-bottom-left-radius: 8px ;
+            border-bottom-right-radius: 80px;
+            color: white;
+            font-size: 80px;
         }
 
 
@@ -61,26 +63,35 @@
     <section><h1>SISTEMA DE CONTROLE DE ESTACIONAMENTO - SCE-DF</h1></section>
     <div id="telaEntrada" class="section" style="display: block;">
         <h1><span class="font1">Bem vindo!</span></h1>
+        <article>
         <h1>Estacionamento</h1>
+        </article>
         <button onclick="gerarPlaca()">ENTRAR</button>
+        <article>
         <p id="placaEntrada"></p>
         <button id="botaoProsseguir" style="display:none;" onclick="mudarTela('telaPagamento')">Prosseguir</button>
+        </article>
     </div>
+    
 
     <!-- Tela de Pagamento -->
     <div id="telaPagamento" class="section">
-        <h1>Pagamento</h1>
+        <h1><span class="font1">Terminal de Pagamento:</span></h1>
 
-        <article><p>Digite a placa do veículo:</p><article>
+        <article>
+            <h1>Digite a placa do veículo:</h1>
+        </article>
+            <input type="text" id="inputPlaca">
+            <button onclick="calcularPagamento()">Calcular</button>
+            <article style = 'height:115px'><h1 id="resultadoPagamento"></h1></article>
 
-        <input type="text" id="inputPlaca">
-        <button onclick="calcularPagamento()">Calcular</button>
-        <p id="resultadoPagamento"></p>
     </div>
 
     <!-- Tela de Saída -->
     <div id="telaSaida" class="section">
+        <article style = 'bord'>
         <h1>Saída</h1>
+        </article>
         <button onclick="verificarSaida()">SAIR</button>
         <p id="mensagemSaida"></p>
     </div>
@@ -145,7 +156,7 @@
         }
         let estacionamento = {};
 
-document.getElementById('submitPlaca').addEventListener('click', () => {
+    document.getElementById('submitPlaca').addEventListener('click', () => {
     const placa = document.getElementById('placaInput').value;
     if (placa) {
         const agora = new Date();
@@ -156,9 +167,9 @@ document.getElementById('submitPlaca').addEventListener('click', () => {
         document.getElementById('placaMessage').textContent = `Placa ${placa} cadastrada com sucesso!`;
         document.getElementById('placaInput').value = '';
     }
-});
+    });
 
-document.getElementById('calculateTime').addEventListener('click', () => {
+    document.getElementById('calculateTime').addEventListener('click', () => {
     const placa = document.getElementById('placaCalculoInput').value;
     if (estacionamento[placa]) {
         const agora = new Date();
@@ -172,9 +183,9 @@ document.getElementById('calculateTime').addEventListener('click', () => {
     } else {
         document.getElementById('calculoMessage').textContent = 'Placa não encontrada.';
     }
-});
+    });
 
-document.getElementById('pagarButton').addEventListener('click', () => {
+    document.getElementById('pagarButton').addEventListener('click', () => {
     const placa = document.getElementById('placaCalculoInput').value;
     if (estacionamento[placa]) {
         estacionamento[placa].pago = true;
