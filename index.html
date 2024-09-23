@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulação de Estacionamento</title>
+    <style>
+        body { text-align: center; }
+
+        .section { display: none; }
+        button { padding: 10px 20px; font-size: 18px; cursor: pointer; margin-top: 20px; }
+        input { padding: 10px; font-size: 16px; }
+
+        section{
+            background-color: #193F9E;
+            padding-top: 1px;
+         height: 85px;
+         width: 930px;;
+         color: white;
+         margin: auto;
+         border-radius: 10px;
+         font-family: sans-serif;
+         font-size: 20px;
+        }
+
+        p{
+            font-family:sans-serif;
+            font-size: 25px;
+        }
+
+        .font1{
+            font-family:Arial Narrow;
+        letter-spacing: 2px; 
+        color:#193F9E;
+        font-size: 90px;
+        }
+
+        h1{
+            font-size: 31px ;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        article{
+            background-color: #193F9E;
+        height: 300px;
+        width: 650px;;
+        margin: auto;
+        border-top-left-radius: 80px ;
+        border-top-right-radius: 8px ;
+        border-bottom-left-radius: 8px ;
+        border-bottom-right-radius: 80px;
+        color: white;
+        font-size: 80px;
+        
+        }
+
+
+    </style>
+</head>
+<body>
+    <!-- Tela de Entrada -->
+    <section><h1>SISTEMA DE CONTROLE DE ESTACIONAMENTO - SCE-DF</h1></section>
+    <div id="telaEntrada" class="section" style="display: block;">
+        <h1><span class="font1">Bem vindo!</span></h1>
+        <h1>Estacionamento</h1>
+        <button onclick="gerarPlaca()">ENTRAR</button>
+        <p id="placaEntrada"></p>
+        <button id="botaoProsseguir" style="display:none;" onclick="mudarTela('telaPagamento')">Prosseguir</button>
+    </div>
+
+    <!-- Tela de Pagamento -->
+    <div id="telaPagamento" class="section">
+        <h1>Pagamento</h1>
+
+        <article><p>Digite a placa do veículo:</p><article>
+
+        <input type="text" id="inputPlaca">
+        <button onclick="calcularPagamento()">Calcular</button>
+        <p id="resultadoPagamento"></p>
+    </div>
+
+    <!-- Tela de Saída -->
+    <div id="telaSaida" class="section">
+        <h1>Saída</h1>
+        <button onclick="verificarSaida()">SAIR</button>
+        <p id="mensagemSaida"></p>
+    </div>
+
+    <script>
+        function gerarPlaca() {
+            const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let placa = '';
+            for (let i = 0; i < 8; i++) {
+                placa += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
+            }
+            document.getElementById('placaEntrada').innerText = ` Sua placa: ${placa}`;
+            localStorage.setItem('placa', placa); // Armazena a placa
+
+            // Exibe o botão "Prosseguir"
+            document.getElementById('botaoProsseguir').style.display = 'inline-block';
+        }
+
+        function calcularPagamento() {
+            const placaInserida = document.getElementById('inputPlaca').value;
+            const placaGerada = localStorage.getItem('placa');
+            if (placaInserida === placaGerada) {
+                const tempoPermanencia = Math.floor(Math.random() * 240) + 1; // Gera um número entre 1 e 240
+                let preco = tempoPermanencia * 0.15;
+
+                if (tempoPermanencia < 20) {
+                    document.getElementById('resultadoPagamento').innerText = `Tempo de permanência: ${tempoPermanencia} minutos. Não é necessário o pagamento.`;
+                    setTimeout(() => { // Vai para a tela de saída após 3 segundos
+                        mudarTela('telaSaida');
+                    }, 3000);
+                } else {
+                    document.getElementById('resultadoPagamento').innerHTML = `Tempo de permanência: ${tempoPermanencia} minutos. Valor a pagar: R$ ${preco.toFixed(2)} <br><button onclick="pagar()">Pagar</button>`;
+                }
+            } else {
+                document.getElementById('resultadoPagamento').innerText = 'Placa não encontrada. Verifique se a placa está correta.';
+            }
+        }
+
+        function pagar() {
+            alert('Pagamento realizado com sucesso!');
+            setTimeout(() => { // Vai para a tela de saída após 2 segundos
+                mudarTela('telaSaida');
+            }, 2000);
+        }
+
+        function verificarSaida() {
+            const chance = Math.floor(Math.random() * 5); // Gera um número entre 0 e 4 (probabilidade de 1 em 5)
+            if (chance === 0) {
+                document.getElementById('mensagemSaida').innerText = 'Tempo de tolerância de 10 minutos para a saída foi excedido.';
+            } else {
+                document.getElementById('mensagemSaida').innerText = 'Obrigado e volte sempre!';
+            }
+        }
+
+        function mudarTela(telaId) {
+            // Oculta todas as telas
+            document.querySelectorAll('.section').forEach(function(section) {
+                section.style.display = 'none';
+            });
+            // Exibe a tela selecionada
+            document.getElementById(telaId).style.display = 'block';
+        }
+        let estacionamento = {};
+
+document.getElementById('submitPlaca').addEventListener('click', () => {
+    const placa = document.getElementById('placaInput').value;
+    if (placa) {
+        const agora = new Date();
+        estacionamento[placa] = {
+            horario: agora,
+            pago: false
+        };
+        document.getElementById('placaMessage').textContent = `Placa ${placa} cadastrada com sucesso!`;
+        document.getElementById('placaInput').value = '';
+    }
+});
+
+document.getElementById('calculateTime').addEventListener('click', () => {
+    const placa = document.getElementById('placaCalculoInput').value;
+    if (estacionamento[placa]) {
+        const agora = new Date();
+        const horarioEntrada = estacionamento[placa].horario;
+        const tempoEstadia = Math.floor((agora - horarioEntrada) / 1000 / 60); // em minutos
+        const valor = tempoEstadia * 0.20;
+
+        document.getElementById('calculoMessage').textContent = `Tempo de estadia: ${tempoEstadia} minutos. Total a pagar: R$${valor.toFixed(2)}`;
+        estacionamento[placa].valor = valor;
+        document.getElementById('pagarButton').style.display = 'block';
+    } else {
+        document.getElementById('calculoMessage').textContent = 'Placa não encontrada.';
+    }
+});
+
+document.getElementById('pagarButton').addEventListener('click', () => {
+    const placa = document.getElementById('placaCalculoInput').value;
+    if (estacionamento[placa]) {
+        estacionamento[placa].pago = true;
+        document.getElementById('calculoMessage').textContent += ' Pagamento realizado com sucesso!';
+    }
+});
+
+document.getElementById('checkPayment').addEventListener('click', () => {
+    const placa = document.getElementById('placaVerificaInput').value;
+    if (estacionamento[placa]) {
+        const pago = estacionamento[placa].pago;
+        document.getElementById('verificaMessage').textContent = pago ? 'Volte sempre!' : 'Pague o que deve!';
+    } else {
+        document.getElementById('verificaMessage').textContent = 'Placa não encontrada. Tente novamente.';
+    }
+});
+
+// Função para alternar telas
+function changeScreen(from, to) {
+    document.getElementById(from).classList.remove('active');
+    document.getElementById(to).classList.add('active');
+}
+    </script>
+</body>
+</html>
